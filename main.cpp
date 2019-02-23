@@ -1,4 +1,6 @@
+#include <iostream>
 #include "BookDB.h"
+
 
 //NOTES::
 //  - ISBN13's look like dis: 978-1-56931-507-1... i think we should be able to just strip the dashes, right?
@@ -6,15 +8,13 @@
 int main(int argc, char** argv)
 {
     
-    int isbn;
-    // Test stuff out before we have file I/O working...
-    // so... make the structs by hand first.
     Date today;
     today.day   = 21;
     today.month = 2;
     today.year  = 2019;
     
     Book PokemonAdventures;
+    
     PokemonAdventures.ISBN          = 9781569315071;
     PokemonAdventures.wholesaleCost = 474.00;
     PokemonAdventures.retailCost    = 512.99;
@@ -47,37 +47,52 @@ int main(int argc, char** argv)
     myDB.addBook(LewdAnimeh);
     
     // cout test stuff
+    std::cout << "\n\n  ~ Outputting Info On Books ~";
+    std::cout << "\nBook 1: " << myDB.getBook(0).title << "\n  Author: " << myDB.getBook(0).author << "\n  Cost: " << myDB.getBook(0).retailCost;
+    std::cout << "\nBook 2: " << myDB.getBook(1).title << "\n  Author: " << myDB.getBook(1).author << "\n  Cost: " << myDB.getBook(1).retailCost;
+    std::cout << "\nBook 3: " << myDB.getBook(2).title << "\n  Author: " << myDB.getBook(2).author << "\n  Cost: " << myDB.getBook(2).retailCost;
+    std::cout << "\n====================================";
     
-    myDB.sortBy(SORT_METHOD::COST);
+    myDB.sortBooks(SORT_METHOD::COST);
     
-    // cout test stuff
+    std::cout << "\n\n  ~ Sorting Books By Cost ~";
+    std::cout << "\nBook 1: " << myDB.getBook(0).title;
+    std::cout << "\nBook 2: " << myDB.getBook(1).title;
+    std::cout << "\nBook 3: " << myDB.getBook(2).title;
+    std::cout << "\n====================================";
     
-    myDB.sellBook(9784063840308);
+    myDB.sellBook(9784063840308L);
     
-    // cout test stuff
+    std::cout << "\n\n  ~ Selling LewdAnimeh By ISBN ~";
+    std::cout << "\nBook 1: " << myDB.getBook(0).title;
+    std::cout << "\nBook 2: " << myDB.getBook(1).title;
+    std::cout << "\nBook 3: " << myDB.getBook(2).title;
+    std::cout << "\n====================================";
     
     for(int idx = 0; idx < 2000; idx++)
         myDB.addBook(HinaMatsuri);
     
-    // more test stuff
+    std::cout << "\n\n  ~ Adding 2000 copies of Hina Matsuri ~";
+    std::cout << "\nBook 1: " << myDB.getBook(0).title;
+    std::cout << "\nBook 2: " << myDB.getBook(1).title;
+    std::cout << "\nBook 3: " << myDB.getBook(2).title;
+    std::cout << "\nBook 5: " << myDB.getBook(4).title;
+    std::cout << "\nBook 401: " << myDB.getBook(400).title;
+    std::cout << "\nBook 2001: " << myDB.getBook(2000).title;
+    std::cout << "\nNumber of books in database: " << myDB.getNumBooks();
+    std::cout << "\n====================================";
     
-    myDB.sortBy(SORT_METHOD::QUANTITY);
+    myDB.sortBooks(SORT_METHOD::QUANTITY);
     
-    // meow test stuff...
+    std::cout << "\n\n  ~ Sorting Books By Quantity ~ ";
+    std::cout << "\nBook 1: " << myDB.getBook(0).title;
+    std::cout << "\nBook 1002: " << myDB.getBook(1001).title;
+    std::cout << "\nBook 2000: " << myDB.getBook(1999).title;
+    std::cout << "\n====================================";
     
     
     
-    
-    
-    
-    cout << "which book to remove?";
-    cin >> isbn;
-    
-    if (myDB.removeBook(isbn))
-        cout << "book was removed";
-    else
-        cout << "err. book not on hand...";
-    
+    std::cout << "\n\n";
     return 0;
     
 }

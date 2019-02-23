@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <fstream>
 
 #define MAX_BOOKS 2048
 
@@ -21,7 +22,7 @@ struct Date
 
 struct Book
 {
-    int ISBN;
+    unsigned long ISBN;
     double wholesaleCost, retailCost;
     std::string title, author, publisher;
     Date addedOn;
@@ -29,14 +30,14 @@ struct Book
 };
 
 /* REQ  List by Quantity. A list of all books in the inventory sorted by quantity on hand. The books with the greatest quantity on hand will be listed first.
-        List by Cost. A list of all books in the inventory, sorted by wholesale cost. The
+ List by Cost. A list of all books in the inventory, sorted by wholesale cost. The
  books with the greatest wholesale cost will be listed first.
-        List by Age. A list of all books in the inventory, sorted by purchase date. The
+ List by Age. A list of all books in the inventory, sorted by purchase date. The
  books that have been in the inventory longest will be listed first.
  */
 enum SORT_METHOD
 {
-    QUANTITY, COST, AGE;
+    QUANTITY = 0, COST, AGE
 };
 
 class BookDB
@@ -52,40 +53,42 @@ public:                                        // We can do any of these
     ~BookDB();
 public:
     // Getters
-            //!! REQ Inventory List. A list of information on all books in the inventory.
+    //!! REQ Inventory List. A list of information on all books in the inventory.
     Book*    getBooks();
     Book     getBook(int index);
     int      getNumBooks();
     
-            //!! REQ Inventory Wholesale Value A list of the wholesale value of all books in the inventory and the total wholesale value of the inventory.
+    //!! REQ Inventory Wholesale Value A list of the wholesale value of all books in the inventory and the total wholesale value of the inventory.
     double   getWholesaleValue();
     
-            //!! REQ Inventory Retail Value. A list of the retail value of all books in the inventory and the total retail value of the inventory.
+    //!! REQ Inventory Retail Value. A list of the retail value of all books in the inventory and the total retail value of the inventory.
     double  getRetailValue();
     
     // Mutators
     void    readBooks(std::string filename);    // Needed if we go with option 1 or 2
     void    writeBooks(std::string filename);
-            //!! REQ When a book is purchased, subtract it from the inventory file !!//
-    double    sellBook(int ISBN);                 // These cannot be combined...
-            //!! REQ Add, change, delete, and look up books in the inventory file !!//
-    bool    removeBook(Book bk);                // Sellbook does sales data, then calls rembk
-    void    removeBook(std::string bkName);
-    void    removeBook(int ISBN, int quantity);               // <--probably just use this one
-    void    addBook(Book bk);
-    int     findBook(ISBN);                     // Returns the index in our array of the found entry or -1 if not found
-    void    modifyBook(int ISBN, Book replacement);
+    //!! REQ When a book is purchased, subtract it from the inventory file !!//
+    
+    // ** Book Modifiers ** //
+    double  sellBook(unsigned long ISBN);                 // These cannot be combined...
+    //!! REQ Add, change, delete, and look up books in the inventory file !!//
+    bool    removeBook(unsigned long ISBN, int quantity);               // <--probably just use this one
+    bool    addBook(Book bk);
+    int     findBook(unsigned long ISBN);                     // Returns the index in our array of the found entry or -1 if not found
+    void    modifyBook(unsigned long ISBN, Book replacement);
     int     findBook(std::string author);
-    int     findBook(something else?);
+    
+    // Sorting
     bool    sortBooks(SORT_METHOD sm);
     
 private:
     Book*   books;
     int     numBooks;
-    double  wholesaleValue;
-    double  retailValue;
-    std::string DBFilename;
-    std::fstream DBFile;
+    double  totalWholesaleValue;
+    double  totalRetailValue;
+    double  currentNetProfit;
+    std::string     DBFilename;
+    std::fstream    DBFile;
 };
 
 

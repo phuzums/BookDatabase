@@ -1,20 +1,17 @@
 #include "BookDB.h"
 
-
 //Pre:  None
 //Post: Initializes a BookDB object and its variables
 BookDB::BookDB(std::string filename)
 {
     DBFilename = filename;
     numBooks = 0;
-    wholesaleValue = 0;
-    retailValue = 0;
+    totalWholesaleValue = 0;
+    totalRetailValue = 0;
     
     books = new Book[MAX_BOOKS];
     // Parse books here? ... yes. parse thems hurr.
-    parseBooks(DBFilename);
-    
-    numBooks = getNumBooks();
+    readBooks(DBFilename);
     
 }
 //Pre:  BookDB Exists
@@ -35,25 +32,35 @@ Book* BookDB::getBooks()
     return books;
 }
 
+Book BookDB::getBook(int index)
+{
+    return books[index];
+}
+
 //Pre:  books has been initialized
 //Post: books array is traversed to find how many book entries there are
 //          number of books is returned as an int
 int BookDB::getNumBooks()
 {
     // figure out how many books via iteratting
-    return 0;
+    return numBooks;
 }
 
 //Pre:  books has been initialized
 //Post: returns the wholesale value of all the books combined
 double BookDB::getWholesaleValue()
 {
-    return wholesaleValue;
+    return totalWholesaleValue;
 }
 
 double BookDB::getRetailValue()
 {
-    return retailValue;
+    return totalRetailValue;
+}
+
+int BookDB::findBook(unsigned long ISBN)
+{
+    return 0;
 }
 
 
@@ -64,13 +71,17 @@ double BookDB::getRetailValue()
 //Post: bk is filled with books from the file <filename>.
 //      WholesaleValue and retailValue are updated as the books
 //      are moved into the books array
-void parseBooks(std::string filename)
+void BookDB::readBooks(std::string filename)
 {
     //file init
     
     //loop through the input
-        //add books as they're found
-            //add books' value as they're added
+    //add books as they're found
+    //add books' value as they're added
+    
+    // Thingies I have to set here...
+    numBooks = 0;
+    totalRetailValue = totalWholesaleValue = 0;
     
 }
 
@@ -96,24 +107,24 @@ void BookDB::writeBooks(std::string filename)
 //      values of bk to make sure they're there (not missing ISBN, etc...)
 bool    BookDB::addBook(Book bk)
 {
-    //re-sort the array?
-    return SUCCESS;
+    books[numBooks++] = bk;
+    return 1;
 }
 
 //Pre:  iunno?
 //Post: A book of ISBN is sold from the database IF the ISBN is found AND the
 //      quantity is > 0. Retail and wholesale value of the databse is adjusted
 //      for the book. Returns the price of the book sold.
-double sellBook(int ISBN)
+double BookDB::sellBook(unsigned long ISBN)
 {
-    
+    return 0.0;
 }
 
 //Pre:  stuff
 //Post: Pretty much the same as sellBook, except it's the inventory management version?
-bool    BookDB::removeBook(int ISBN, int quantity)
+bool    BookDB::removeBook(unsigned long ISBN, int quantity)
 {
-    
+    return 1;
 }
 
 //Pre:  sm is a valid sort method. books array should hold > 1 book
@@ -121,9 +132,10 @@ bool    BookDB::removeBook(int ISBN, int quantity)
 bool    BookDB::sortBooks(SORT_METHOD sm)
 {
     //is the array > 1?
-        //if no, return 0
+    //if no, return 0
     
     //loop through books using books array and numBooks
-        //compare values determined by the sm (case switch?)
-            //move and sort the books
+    //compare values determined by the sm (case switch?)
+    //move and sort the books
+    return 1;
 }
