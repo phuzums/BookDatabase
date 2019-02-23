@@ -71,7 +71,8 @@ int main(int argc, char** argv)
     
     for(int idx = 0; idx < 2000; idx++)
         myDB.addBook(HinaMatsuri);
-    
+    // NOTE: Adding duplicate copies of books shouldn't increase numBooks, it should update the quantity of the existing book entry...
+    //       Point being, there should only be 3 books here still and myDB.getBook(4) should fail and return either a null ptr or failfish Book
     std::cout << "\n\n  ~ Adding 2000 copies of Hina Matsuri ~";
     std::cout << "\nBook 1: " << myDB.getBook(0).title;
     std::cout << "\nBook 2: " << myDB.getBook(1).title;
