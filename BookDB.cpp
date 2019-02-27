@@ -129,13 +129,80 @@ bool    BookDB::removeBook(unsigned long ISBN, int quantity)
 
 //Pre:  sm is a valid sort method. books array should hold > 1 book
 //Post: books array is sorted through using the appropriate SORT_METHOD
-bool    BookDB::sortBooks(SORT_METHOD sm)
+bool BookDB::sortBooks(SORT_METHOD sm)
 {
     //is the array > 1?
     //if no, return 0
+    Book *books = getBooks();
+    int numBooks = getNumBooks();
+    if (numBooks <= 1)
+    {
+        return false;
+    }
     
+
     //loop through books using books array and numBooks
     //compare values determined by the sm (case switch?)
     //move and sort the books
-    return 1;
+    if (sm == QUANTITY) {
+        int i, j, min_idx;
+        
+        // One by one move boundary of unsorted subarray
+        for (i = 0; i < numBooks - 1; i++)
+        {
+            min_idx = i;
+            for (j = i + 1; j < numBooks; j++)
+                if (books[j].quantity < books[min_idx].quantity)
+                    min_idx = j;
+            // Swap
+            Book temp = books[min_idx];
+            books[min_idx] = books[j];
+            books[j] = temp;
+        }
+        return true;
+    }
+    else if (sm == COST) {
+        int i, j, min_idx;
+        
+        // One by one move boundary of unsorted subarray
+        for (i = 0; i < numBooks - 1; i++)
+        {
+            min_idx = i;
+            for (j = i + 1; j < numBooks; j++)
+                if (books[j].retailCost < books[min_idx].retailCost)
+                    min_idx = j;
+            // Swap
+            Book temp = books[min_idx];
+            books[min_idx] = books[j];
+            books[j] = temp;
+        }
+        return true;
+    }
+    else if (sm == AGE) {
+        int i, j, min_idx;
+        
+        // One by one move boundary of unsorted subarray
+        for (i = 0; i < numBooks - 1; i++)
+        {
+            min_idx = i;
+            for (j = i + 1; j < numBooks; j++)
+                if (books[j].addedOn.year < books[min_idx].addedOn.year && books[j].addedOn.year != books[min_idx].addedOn.year)
+                    min_idx = j;
+                else if (books[j].addedOn.month < books[min_idx].addedOn.month && books[j].addedOn.month != books[min_idx].addedOn.month)
+                    min_idx = j;
+                else if (books[j].addedOn.day < books[min_idx].addedOn.day && books[j].addedOn.day != books[min_idx].addedOn.day)
+                    min_idx = j;
+            
+            // Swap
+            if (min_idx == j) {
+                Book temp = books[min_idx];
+                books[min_idx] = books[j];
+                books[j] = temp;
+            }
+        }
+        return true;
+    }
+    return false;
 }
+
+
