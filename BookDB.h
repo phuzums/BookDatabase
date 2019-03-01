@@ -20,13 +20,15 @@ struct Date
     int day, month, year;
 };
 
-struct Book
+class Book
 {
+public:
     unsigned long ISBN;
     double wholesaleCost, retailCost;
     std::string title, author, publisher;
     Date addedOn;
     int quantity = 1;
+    friend std::ostream& operator<<(std::ostream &out, const Book &bk);
 };
 
 /* REQ  List by Quantity. A list of all books in the inventory sorted by quantity on hand. The books with the greatest quantity on hand will be listed first.
@@ -81,9 +83,11 @@ public:
     // Sorting
     bool    sortBooks(SORT_METHOD sm);
     
+
 private:
     Book*   books;
-    int     numBooks;
+    int     numBooks;           // number of book objects (entries in DB)
+    int     quantityItems;      // number of books including duplicate copies
     double  totalWholesaleValue;
     double  totalRetailValue;
     double  currentNetProfit;
