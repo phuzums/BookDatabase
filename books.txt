@@ -1,0 +1,14 @@
+123456 Hello Kitty} Krissi E. Yan} Meow Publishing inc.} 5 2 2019 200 10.12 9.99
+342991 Origins of Yaoi and Other Family Activities} Fuzums} Red Ink Books} 2 4 1945 2 90.21 100.23
+908523 Introduction to C++} Manish Goush (sp?)} lolcode corp.} 9 3 2001 1 99.99 0.01
+342991 Origins of Yaoi and Other Family Activities} Fuzums} Red Ink Books} 2 4 1945 9 90.21 100.23
+430201 Cat Memes for Potatos} lolcat} derp derp inc.} 4 2 2013 3 10.23 35.21
+409406 Ceiling Cat Is Watching You} Ceiling Cat} Ceiling Cats} 9 13 2016 1 4.50 9.99
+134501 How To RTFM} Some Salty Guy} Salt Publishers} 10 12 2014 20 5.00 5.01
+569333 TFM} Some Nerd} locat} 11 12 2014 30 4.99 5.00
+230496 360 No Scope for Kids!} Squeaker} Clifford Publishing} 3 5 2004 1 2.50 12.50
+569045 How To Not Fuck Up} Other People} Dis World} 4 20 2001 3 9999.00 10000.01
+234509 =^.^= How to Make an Ascii Cat =^.^=} Defo fuzums} huh?} 4 20 2002 1 100.00 101.99
+346693 How to Build a Book Database System} Bennet} Cuz he's smurt} 4 20 2020 2 9.99 1.00
+954363 The Loneliest UTI} Fuz Ball} AMA Publishings inc.} 1 2 2003 1 5.00 6.00
+450964 Cat Pictures and Rainbows} Krissi E. Yan} Krissi's Publisher Person Thingy} 4 20 1998 12.45 25.50
