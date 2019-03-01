@@ -209,14 +209,12 @@ bool BookDB::sortBooks(SORT_METHOD sm)
 {
     //is the array > 1?
     //if no, return 0
-    //Book *books = getBooks();
-    //int numBooks = getNumBooks();
-    if (numBooks <= 1)
-    {
+    Book *books = getBooks();
+    int numBooks = getNumBooks();
+    if (numBooks <= 1) {
         return false;
     }
     
-
     //loop through books using books array and numBooks
     //compare values determined by the sm (case switch?)
     //move and sort the books
@@ -234,9 +232,6 @@ bool BookDB::sortBooks(SORT_METHOD sm)
             Book temp = books[min_idx];
             books[min_idx] = books[j];
             books[j] = temp;
-            
-            //test//
-            //books[2] = books[1];
         }
         return true;
     }
@@ -281,9 +276,8 @@ bool BookDB::sortBooks(SORT_METHOD sm)
         }
         return true;
     }
-    return false;
+    return false; // end-of-function return val needed incase it gets reached somehow
 }
-
 
 std::ostream& operator <<(std::ostream &out, const Book &bk)
 {
