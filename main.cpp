@@ -7,7 +7,7 @@
 //  - ISBN10's look like 164273005X ... the chars would be more work search-wise... let's just use 13's w/o dashes?
 int main(int argc, char** argv)
 {
-    
+
     Date today;
     today.day   = 21;
     today.month = 2;
@@ -22,6 +22,7 @@ int main(int argc, char** argv)
     PokemonAdventures.author        = "Hidenori Kusaka";
     PokemonAdventures.publisher     = "Shogakukan";
     PokemonAdventures.addedOn       = today;
+    PokemonAdventures.quantity      = 400;
     
     Book HinaMatsuri;
     HinaMatsuri.ISBN                = 9781642730050;
@@ -31,64 +32,83 @@ int main(int argc, char** argv)
     HinaMatsuri.author              = "Masao Ohtake";
     HinaMatsuri.publisher           = "One Peace Books";
     HinaMatsuri.addedOn             = today;
+    HinaMatsuri.quantity            =20;
     
     Book LewdAnimeh;
     LewdAnimeh.ISBN                 = 9784063840308;
     LewdAnimeh.wholesaleCost        = 7.89;
     LewdAnimeh.retailCost           = 99999999999.99; //#worthit
-    LewdAnimeh.title                = "Seitokai Yakuindomo 1";
+    LewdAnimeh.title                = "Seitokai Yakuindomo";
     LewdAnimeh.author               = "Tozen Ujiie";
     LewdAnimeh.publisher            = "Kodansha";
     LewdAnimeh.addedOn              = today;
+    LewdAnimeh.quantity             = 5;
     
-    BookDB myDB("not_implemented_yet.nyan");
-    myDB.addBook(PokemonAdventures);
-    myDB.addBook(HinaMatsuri);
-    myDB.addBook(LewdAnimeh);
     
+    //myDB.addBook(PokemonAdventures);
+    //myDB.addBook(HinaMatsuri);
+    //myDB.addBook(LewdAnimeh);
+    //std::string fn;
+    //std::cout << "\nPlease Enter Database Filename : ";
+    //std::cin >> fn;
+    
+    
+    BookDB *myDB = new BookDB("books.txt");
     // cout test stuff
+    
+    
     std::cout << "\n\n  ~ Outputting Info On Books ~";
-    std::cout << "\nBook 1: " << myDB.getBook(0).title << "\n  Author: " << myDB.getBook(0).author << "\n  Cost: " << myDB.getBook(0).retailCost;
-    std::cout << "\nBook 2: " << myDB.getBook(1).title << "\n  Author: " << myDB.getBook(1).author << "\n  Cost: " << myDB.getBook(1).retailCost;
-    std::cout << "\nBook 3: " << myDB.getBook(2).title << "\n  Author: " << myDB.getBook(2).author << "\n  Cost: " << myDB.getBook(2).retailCost;
+    // Print all the books in the DB
+    
+    //std::cout << myDB;
+    
+    for(int idx = 0; idx < myDB->getNumBooks(); idx++)
+        std::cout << "\nBook " << idx << ':' << myDB->getBook(idx);
+    
+    std::cout << "\nTotal Wholesale Worth: " << myDB->getWholesaleValue();
+    std::cout << "\nTotal Retail Worth: " << myDB->getRetailValue();
+    std::cout << "\nBooks in DB: " << myDB->getNumBooks();
     std::cout << "\n====================================";
     
-    myDB.sortBooks(SORT_METHOD::COST);
+    std::cout << "\n\n  ~ Original Book List ~";
+    for(int idx = 0; idx < myDB->getNumBooks(); idx++)
+        std::cout << "\nBook " << idx << ':' << myDB->getBook(idx).title;
+    std::cout << "\n====================================";
+    
+    myDB->sortBooks(SORT_METHOD::COST);
     
     std::cout << "\n\n  ~ Sorting Books By Cost ~";
-    std::cout << "\nBook 1: " << myDB.getBook(0).title;
-    std::cout << "\nBook 2: " << myDB.getBook(1).title;
-    std::cout << "\nBook 3: " << myDB.getBook(2).title;
+    for(int idx = 0; idx < myDB->getNumBooks(); idx++)
+        std::cout << "\nBook " << idx << ':' << myDB->getBook(idx).title;
     std::cout << "\n====================================";
     
-    myDB.sellBook(9784063840308L);
+    myDB->sellBook(9784063840308L);
     
     std::cout << "\n\n  ~ Selling LewdAnimeh By ISBN ~";
-    std::cout << "\nBook 1: " << myDB.getBook(0).title;
-    std::cout << "\nBook 2: " << myDB.getBook(1).title;
-    std::cout << "\nBook 3: " << myDB.getBook(2).title;
+    std::cout << "\nBook 1: " << myDB->getBook(0).title;
+    std::cout << "\nBook 2: " << myDB->getBook(1).title;
+    std::cout << "\nBook 3: " << myDB->getBook(2).title;
     std::cout << "\n====================================";
     
-    for(int idx = 0; idx < 2000; idx++)
-        myDB.addBook(HinaMatsuri);
-    // NOTE: Adding duplicate copies of books shouldn't increase numBooks, it should update the quantity of the existing book entry...
-    //       Point being, there should only be 3 books here still and myDB.getBook(4) should fail and return either a null ptr or failfish Book
-    std::cout << "\n\n  ~ Adding 2000 copies of Hina Matsuri ~";
-    std::cout << "\nBook 1: " << myDB.getBook(0).title;
-    std::cout << "\nBook 2: " << myDB.getBook(1).title;
-    std::cout << "\nBook 3: " << myDB.getBook(2).title;
-    std::cout << "\nBook 5: " << myDB.getBook(4).title;
-    std::cout << "\nBook 401: " << myDB.getBook(400).title;
-    std::cout << "\nBook 2001: " << myDB.getBook(2000).title;
-    std::cout << "\nNumber of books in database: " << myDB.getNumBooks();
-    std::cout << "\n====================================";
-    
-    myDB.sortBooks(SORT_METHOD::QUANTITY);
+    myDB->sortBooks(SORT_METHOD::QUANTITY);
     
     std::cout << "\n\n  ~ Sorting Books By Quantity ~ ";
-    std::cout << "\nBook 1: " << myDB.getBook(0).title;
-    std::cout << "\nBook 1002: " << myDB.getBook(1001).title;
-    std::cout << "\nBook 2000: " << myDB.getBook(1999).title;
+    std::cout << "\nBook 1: " << myDB->getBook(0).title;
+    std::cout << "\nBook 2: " << myDB->getBook(1).title;
+    std::cout << "\nBook 3: " << myDB->getBook(2).title;
+    std::cout << "\nBook 5: " << myDB->getBook(4).title;
+    std::cout << "\nBook 1002: " << myDB->getBook(1001).title;
+    std::cout << "\nBook 2000: " << myDB->getBook(1999).title;
+    std::cout << "\n====================================";
+    
+    myDB->sortBooks(SORT_METHOD::AGE);
+    
+    std::cout << "\n\n  ~ Sorting Books By Age ~ ";
+    std::cout << "\nBook 1: " << myDB->getBook(0).title;
+    std::cout << "\nBook 2: " << myDB->getBook(1).title;
+    std::cout << "\nBook 3: " << myDB->getBook(2).title;
+    std::cout << "\nBook 1002: " << myDB->getBook(1001).title;
+    std::cout << "\nBook 2000: " << myDB->getBook(1999).title;
     std::cout << "\n====================================";
     
     
