@@ -1,5 +1,8 @@
 #include "BookDB.h"
 
+//temp
+#include <iostream>
+
 //Pre:  None
 //Post: Initializes a BookDB object and its variables
 BookDB::BookDB(std::string filename)
@@ -60,6 +63,10 @@ double BookDB::getRetailValue()
 
 int BookDB::findBook(unsigned long ISBN)
 {
+    if( numBooks > 0 )
+        for(int idx = 0; idx < numBooks; idx++)
+            if(books[idx].ISBN == ISBN)
+                return idx;
     return 0;
 }
 
@@ -80,8 +87,75 @@ void BookDB::readBooks(std::string filename)
     //add books' value as they're added
     
     // Thingies I have to set here...
+    
+    // file format:
+    // <isbn> <title>} <author>} <publisher>} <month-added> <day-added> <year-added> <quantity> <retailcost> <wholesalecost>
+    /*
+     1239428842 Hello Kitty} Krissi Yan} Meow Books Inc} 1 5 2019 200 10.21 12.02
+     */
     numBooks = 0;
     totalRetailValue = totalWholesaleValue = 0;
+    
+    DBFile.open(DBFilename);
+
+  //  std::string db;
+  //  DBFile >> db;
+  //  std::cout << db;
+ //   DBFile << "moew";
+    unsigned long temp = 0;
+    do
+    {
+        std::string tstr;
+        
+        DBFile >> books[numBooks].ISBN;
+        
+        
+        // Search for an existing entry
+        temp = findBook(books[numBooks].ISBN);
+        
+        // increase quantity if a match was found
+        if( temp > 0 )
+        {
+            int junkint;
+            double junkdbl;
+            std::cout << "\nduplicate entry found";
+            std::cout << "\nmerging quantities and info for " << books[temp].title;
+            std::getline(DBFile, tstr, '}');
+            std::getline(DBFile, tstr, '}' );
+            std::getline(DBFile, tstr, '}' );
+            DBFile >> junkint; //day
+            DBFile >> junkint; //month
+            DBFile >> junkint; //year
+            DBFile >> junkint;
+            books[temp].quantity += junkint;
+            DBFile >> junkdbl;
+            totalRetailValue += junkdbl * (double)junkint;
+            DBFile >> junkdbl;
+            totalWholesaleValue += junkdbl * (double)junkint;
+            
+            temp = 0;
+        }
+        
+        std::getline(DBFile, tstr, '}');
+        books[numBooks].title = tstr;
+        std::getline(DBFile, tstr, '}' );
+        books[numBooks].author = tstr;
+        std::getline(DBFile, tstr, '}' );
+        books[numBooks].publisher = tstr;
+        DBFile >> books[numBooks].addedOn.month;
+        DBFile >> books[numBooks].addedOn.day;
+        DBFile >> books[numBooks].addedOn.year;
+        DBFile >> books[numBooks].quantity;
+        DBFile >> books[numBooks].retailCost;
+        DBFile >> books[numBooks].wholesaleCost;
+        
+        totalRetailValue += books[numBooks].retailCost * (double)books[numBooks].quantity;
+        totalWholesaleValue += books[numBooks].wholesaleCost * (double)books[numBooks].quantity;
+        
+        numBooks++;
+        
+        
+    } while(!DBFile.eof());//while( DBFile.peek() != '\n' && numBooks < MAX_BOOKS);
     
 }
 
@@ -107,6 +181,8 @@ void BookDB::writeBooks(std::string filename)
 //      values of bk to make sure they're there (not missing ISBN, etc...)
 bool    BookDB::addBook(Book bk)
 {
+    if(numBooks == MAX_BOOKS)
+        return false;
     books[numBooks++] = bk;
     return 1;
 }
@@ -133,8 +209,8 @@ bool BookDB::sortBooks(SORT_METHOD sm)
 {
     //is the array > 1?
     //if no, return 0
-    Book *books = getBooks();
-    int numBooks = getNumBooks();
+    //Book *books = getBooks();
+    //int numBooks = getNumBooks();
     if (numBooks <= 1)
     {
         return false;
@@ -158,6 +234,9 @@ bool BookDB::sortBooks(SORT_METHOD sm)
             Book temp = books[min_idx];
             books[min_idx] = books[j];
             books[j] = temp;
+            
+            //test//
+            //books[2] = books[1];
         }
         return true;
     }
@@ -205,4 +284,12 @@ bool BookDB::sortBooks(SORT_METHOD sm)
     return false;
 }
 
+
+std::ostream& operator <<(std::ostream &out, const Book &bk)
+{
+    std::cout << "\n  Title: " << bk.title << "\n  Author: " << bk.author << "\n  Cost: " << bk.retailCost
+    << "\n  Wholesale: " << bk.wholesaleCost << "\n  Publisher: " << bk.publisher
+    << "\n  ISBN: " << bk.ISBN << "\n  Quantity: " << bk.quantity;
+    return out;
+}
 
