@@ -16,3 +16,4 @@ Change log:
  - findBook(unsigned long ISBN) now returns an int instead of unsigned int, -1 is returned as an error code (since 0 is a valid index)
  - Lots of formatting has been done and debug code moved / deleted...
  - books.txt and database file formatting has changed to have less spaces and less complicated output formatting
+    [] Values also normalized to be less hillarious and thus less confusing during debugging :(
