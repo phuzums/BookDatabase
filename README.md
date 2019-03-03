@@ -14,4 +14,5 @@ Change log:
  - Read/WriteSalesData() added
  - getBook(int idx) now returns an 'error' book if it can't find the book, rather than crashing the program
  - findBook(unsigned long ISBN) now returns an int instead of unsigned int, -1 is returned as an error code (since 0 is a valid index)
-  
+ - Lots of formatting has been done and debug code moved / deleted...
+ - books.txt and database file formatting has changed to have less spaces and less complicated output formatting
