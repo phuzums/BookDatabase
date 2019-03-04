@@ -2,6 +2,7 @@
 #include <iomanip>
 #include "BookDB.h"
 
+/////////////////////////////////////////////////////////////////////////
 //Pre:  None
 //Post: Initializes a BookDB object and its variables
 BookDB::BookDB(std::string filename, std::string sFilename)
@@ -18,6 +19,8 @@ BookDB::BookDB(std::string filename, std::string sFilename)
 	readBooks(DBFilename);
 	readSalesData(salesFilename);
 }
+
+/////////////////////////////////////////////////////////////////////////
 //Pre:  BookDB Exists
 //Post: stuff gets deleted and whatnot
 BookDB::~BookDB()
@@ -41,6 +44,8 @@ BookDB::~BookDB()
 
 
 // ============Getters==============
+
+/////////////////////////////////////////////////////////////////////////
 //Pre:  books has been filled with at least 1 book?
 //Post: pointer to books array is returned
 Book* BookDB::getBooks()
@@ -48,6 +53,9 @@ Book* BookDB::getBooks()
 	return books;
 }
 
+/////////////////////////////////////////////////////////////////////////
+//Pre:  
+//Post: 
 Book BookDB::getBook(int index)
 {
 	if(index >= 0)
@@ -58,6 +66,7 @@ Book BookDB::getBook(int index)
 	}
 }
 
+/////////////////////////////////////////////////////////////////////////
 //Pre:  books has been initialized
 //Post: books array is traversed to find how many book entries there are
 //          number of books is returned as an int
@@ -67,6 +76,7 @@ int BookDB::getNumBooks()
 	return numBooks;
 }
 
+/////////////////////////////////////////////////////////////////////////
 //Pre:  books has been initialized
 //Post: returns the wholesale value of all the books combined
 double BookDB::getWholesaleValue()
@@ -74,11 +84,17 @@ double BookDB::getWholesaleValue()
 	return totalWholesaleValue;
 }
 
+/////////////////////////////////////////////////////////////////////////
+//Pre:  books has been initialized
+//Post: 
 double BookDB::getRetailValue()
 {
 	return totalRetailValue;
 }
 
+/////////////////////////////////////////////////////////////////////////
+//Pre:  books has been initialized
+//Post: returns the wholesale value of all the books combined
 int BookDB::findBook(unsigned long ISBN)
 {
 	if (numBooks > 0)
@@ -88,9 +104,20 @@ int BookDB::findBook(unsigned long ISBN)
 	return -1;
 }
 
+/////////////////////////////////////////////////////////////////////////
+//Pre:  books has been initialized
+//Post: 
+int BookDB::findBook(std::string title)
+{
+	if (numBooks > 0)
+		for (int idx = 0; idx < numBooks; idx++)
+			if (books[idx].title == title)
+				return idx;
+	return -1;
+}
 
 // ============Mutators==============
-
+/////////////////////////////////////////////////////////////////////////
 //Pre:  Filename is valid and bk is initialized to hold at least
 //      MAX_BOOKS
 //Post: bk is filled with books from the file <filename>.
@@ -165,6 +192,7 @@ bool BookDB::readBooks(std::string filename)
 	return true;
 }
 
+/////////////////////////////////////////////////////////////////////////
 //Pre:	Filename is valid and not currently being r/w'd to. We're assuming the
 //		file will never shrink (as only quantities are set to zero, not removed)
 //Post: Book array is formatted and outputted to a file. The filename should
@@ -203,6 +231,9 @@ bool BookDB::writeBooks(std::string filename)
 	return true;
 }
 
+/////////////////////////////////////////////////////////////////////////
+//Pre:  
+//Post: 
 bool	BookDB::readSalesData(std::string filename)
 {
 
@@ -226,6 +257,9 @@ bool	BookDB::readSalesData(std::string filename)
 	return true;
 }
 
+/////////////////////////////////////////////////////////////////////////
+//Pre:  
+//Post: 
 bool	BookDB::writeSalesData(std::string filename)
 {
 	salesFile.open(filename, std::fstream::out);
@@ -239,8 +273,9 @@ bool	BookDB::writeSalesData(std::string filename)
 	return true;
 }
 
-//pre: bk is a valid book
-//post: bk is added to the end of the array IF the numBooks is less than
+/////////////////////////////////////////////////////////////////////////
+//Pre: bk is a valid book
+//Post: bk is added to the end of the array IF the numBooks is less than
 //      or equal to the max amt of books. Wholesale and Retail value is updated
 //      by adding to the class's member variables. Returns 1 if success, 0 if
 //      error such as not enough space or bk not initialized. Also checks the
@@ -253,6 +288,7 @@ bool BookDB::addBook(Book bk)
 	return 1;
 }
 
+/////////////////////////////////////////////////////////////////////////
 //Pre:  iunno?
 //Post: A book of ISBN is sold from the database IF the ISBN is found AND the
 //      quantity is > 0. Retail and wholesale value of the databse is adjusted
@@ -279,6 +315,9 @@ double BookDB::sellBook(unsigned long ISBN)
 	return books[idx].retailCost;
 }
 
+/////////////////////////////////////////////////////////////////////////
+//Pre:  
+//Post: 
 double BookDB::sellBook(int idx)
 {
 	// Error checking
@@ -300,6 +339,7 @@ double BookDB::sellBook(int idx)
 	return books[idx].retailCost;
 }
 
+/////////////////////////////////////////////////////////////////////////
 //Pre:  stuff
 //Post: Pretty much the same as sellBook, except it can remove multiple books at
 //		one and returns true if successful and false if there was an error
@@ -318,6 +358,7 @@ bool    BookDB::removeBook(unsigned long ISBN, int quantity)
 	return 1;
 }
 
+/////////////////////////////////////////////////////////////////////////
 //Pre:  sm is a valid sort method. books array should hold > 1 book
 //Post: books array is sorted through using the appropriate SORT_METHOD
 bool BookDB::sortBooks(SORT_METHOD sm)
@@ -394,6 +435,9 @@ bool BookDB::sortBooks(SORT_METHOD sm)
 	return false; // end-of-function return val needed incase it gets reached somehow
 }
 
+/////////////////////////////////////////////////////////////////////////
+//Pre:  
+//Post: 
 std::ostream& operator <<(std::ostream &out, const Book &bk)
 {
 	std::cout << "\n  Title: " << bk.title << "\n  Author: " << bk.author << "\n  Cost: " << bk.retailCost
