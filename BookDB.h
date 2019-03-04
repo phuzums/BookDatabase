@@ -62,6 +62,7 @@ public:
 	bool    removeBook(unsigned long ISBN, int quantity);		// <--probably just use this one
 	bool    addBook(Book bk);
 	int     findBook(unsigned long ISBN);						// Returns the index in our array of the found entry or -1 if not found
+	int		findBook(std::string title);
 	void    modifyBook(unsigned long ISBN, Book replacement);	// un-needed?
 
 	bool    sortBooks(SORT_METHOD sm);
