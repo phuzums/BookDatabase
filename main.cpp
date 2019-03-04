@@ -81,8 +81,21 @@ int main(int argc, char** argv)
 						else // schoice[0] = book...
 						{
 							type = "book";
-							complete(type, schoice[0]); // for testing purposes
-							// TODO: Implement Search-by-title here
+							//complete(type, schoice[0]); // for testing purposes
+							int idx = myDB->findBook(schoice[0]);
+							if (idx < 0)
+								cout << "\nBook could not be found... Please try again.\n";
+							else
+								if (myDB->getBook(idx).quantity <= 0)
+									cout << "\nBook is currently sold out... Please try another book.\n";
+								else
+								{
+									double price = myDB->sellBook(idx);
+									cout << "\n" << '\"' << myDB->getBook(idx).title << '\"' << " was sold for: " << setprecision(2) << fixed << price;
+								}
+							cout << "\nPress any key...";
+							system("pause >nul");
+							system("cls");
 						}
 					} while (loop[2]);
 
@@ -120,7 +133,7 @@ int main(int argc, char** argv)
 								else
 								{
 									double price = myDB->sellBook(idx);
-									cout << "\n" << '\"' << myDB->getBook(idx).title << '\"' << " was sold for: " << setprecision(2) << fixed << price << endl;
+									cout << "\n" << '\"' << myDB->getBook(idx).title << '\"' << " was sold for: " << setprecision(2) << fixed << price;
 								}
 							cout << "\nPress any key...";
 							system("pause >nul");
@@ -158,11 +171,23 @@ int main(int argc, char** argv)
 				cin >> choice[2];
 				if (choice[2] == 1)
 				{
-
+					cout << "=====================================" << endl;
+					cout << "Inventory Module            " << endl;
+					cout << "=====================================" << endl;
+					cout << "Please enter the ISBN of your book" << endl;
+					cout << "1. Go back" << endl;
+					cout << "=====================================" << endl;
 				}
 				else if (choice[2] == 2)
 				{
-
+					// lots of cin work here, gotta get all the details to fill a book class 
+					/* Book Members:
+						unsigned long ISBN;
+						double wholesaleCost, retailCost;
+						std::string title, author, publisher;
+						Date addedOn;
+						int quantity = 1;
+					*/
 				}
 				else if (choice[2] == 3)
 				{
