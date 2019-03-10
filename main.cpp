@@ -104,21 +104,62 @@ int main(int argc, char** argv)
 				{
 					cin.ignore();
 					system("CLS");
+
+					// Prep a books list for a checkout
+					BookList cart;
+
 					do
 					{
+						// TODO : Cart requires error-checking against duplicate books. 
+						//   Books we do not have cannot be added to the cart, but if we have
+						//   at least 1, you can add 50000 of that book to the cart >_<
 						loopReset(loop);
 						cout << "=====================================" << endl;
 						cout << "Cashier Module            " << endl;
 						cout << "=====================================" << endl;
 						cout << "Please enter the ISBN of your book" << endl;
 						cout << "1. Go back" << endl;
+						cout << "2. View Cart" << endl;
+						cout << "3. Checkout" << endl;
 						cout << "=====================================" << endl;
 						getline(cin, schoice[1]); // reads ISBN name
 						std::cin.sync();
-						if (schoice[1] == "1")
+						if (schoice[1] == "1" || schoice[1] == "2" || schoice[1] == "3")
 						{
-							loop[3] = 0;
-							system("CLS");
+							if (schoice[1] == "1")
+							{
+								loop[3] = 0;
+								system("CLS");
+							}
+							if (schoice[1] == "2")
+							{
+								system("CLS");
+								loop[3] = 1; // <--- kinda hack but it works :)
+								std::setfill('.');
+
+								cout << "=====================================" << endl;
+								cout << "Current Cart Contents..." << endl;
+								cout << "=====================================" << endl;
+								cout << std::left << std::setfill('.');
+								for (int idx = 0; idx < cart.getNumBooks(); idx++)
+									cout << std::setw(31) << cart.getBook(idx).title << "$" << setprecision(2) << fixed << cart.getBook(idx).retailCost << endl;
+								cout << "=====================================" << endl;
+								cout << std::setw(31) << "Total cost" << "$" << setprecision(2) << fixed << cart.getTotalCost() << endl;
+								cout << endl << endl << "Press any key to continue...";
+								system("pause >nul");
+								system("cls");
+								cin.sync();
+							}
+							if (schoice[1] == "3")
+							{
+								// Sell all the books based off each of the cart's item's ISBNs
+								// Note that an ISBN that has associated quantity <= 0 cannot be
+								// added to a cart, so no error checking here.
+								for (int idx = 0; idx < cart.getNumBooks(); idx++)
+									myDB->sellBook(cart.getBook(idx).ISBN);
+								// Also note that profit tracking is inherant to the BookDB class
+								// ...so no profit tracking here either...
+							}
 						}
 						else // schoice[1] = book...
 						{
@@ -132,13 +173,18 @@ int main(int argc, char** argv)
 									cout << "\nBook is currently sold out... Please try another book.\n";
 								else
 								{
-									double price = myDB->sellBook(idx);
-									cout << "\n" << '\"' << myDB->getBook(idx).title << '\"' << " was sold for: " << setprecision(2) << fixed << price;
+									// Add a book to the cart
+									cart.addBook(myDB->getBook(idx));
+									cout << "\n" << '\"' << myDB->getBook(idx).title << '\"' << " was added to the cart!" << endl;
+									// Repeating the cart value is verbose ... we can turn that on tho here by uncommenting if you want
+									//cout << "Current Cart Value : " << setprecision(2) << fixed << cart.getTotalCost();
 								}
 							cout << "\nPress any key...";
 							system("pause >nul");
 							system("cls");
 						}
+
+
 					} while (loop[3]);
 				}
 				else if (choice[1] == 3) // go back
