@@ -5,18 +5,18 @@
 /////////////////////////////////////////////////////////////////////////
 //Pre:  None
 //Post: Initializes a BookDB object and its variables
-BookDB::BookDB(std::string filename, std::string sFilename)
+BookDB::BookDB(std::string filename, std::string sFilename) : BookList()
 {
-	DBFilename			= filename;
+	listFilename		= filename;
 	salesFilename		= sFilename;
-	numBooks			= 0;
+
 	totalWholesaleValue = 0;
 	totalRetailValue	= 0;
 	currentNetProfit	= 0;
 	currentSalesAmount	= 0;
 
 	books = new Book[MAX_BOOKS];
-	readBooks(DBFilename);
+	readBooks();
 	readSalesData(salesFilename);
 }
 
@@ -25,8 +25,8 @@ BookDB::BookDB(std::string filename, std::string sFilename)
 //Post: stuff gets deleted and whatnot
 BookDB::~BookDB()
 {
-	std::cout << "\nWritting Database to file " << DBFilename << "... ";
-	if (writeBooks(DBFilename))
+	std::cout << "\nWritting Database to file " << listFilename << "... ";
+	if (writeBooks())
 		std::cout << "Success!\n";
 	else
 		std::cout << "Error writting to file...\n";
@@ -36,45 +36,17 @@ BookDB::~BookDB()
 		std::cout << "Success!\n";
 	else
 		std::cout << "Error writting to file...\n";
-
-	if (books)
-		delete[] books;
 }
 
 
 
 // ============Getters==============
 
-/////////////////////////////////////////////////////////////////////////
-//Pre:  books has been filled with at least 1 book?
-//Post: pointer to books array is returned
-Book* BookDB::getBooks()
-{
-	return books;
-}
 
-/////////////////////////////////////////////////////////////////////////
-//Pre:  
-//Post: 
-Book BookDB::getBook(int index)
-{
-	if(index >= 0)
-		return books[index];
-	else
-	{
-		Book bk = { 0, 0, 0, "err", "err", "err", {0,0,0},0 };
-	}
-}
 
-/////////////////////////////////////////////////////////////////////////
-//Pre:  books has been initialized
-//Post: books array is traversed to find how many book entries there are
-//          number of books is returned as an int
-int BookDB::getNumBooks()
-{
-	// figure out how many books via iteratting
-	return numBooks;
-}
+
+
+
 
 /////////////////////////////////////////////////////////////////////////
 //Pre:  books has been initialized
@@ -92,29 +64,9 @@ double BookDB::getRetailValue()
 	return totalRetailValue;
 }
 
-/////////////////////////////////////////////////////////////////////////
-//Pre:  books has been initialized
-//Post: returns the wholesale value of all the books combined
-int BookDB::findBook(unsigned long ISBN)
-{
-	if (numBooks > 0)
-		for (int idx = 0; idx < numBooks; idx++)
-			if (books[idx].ISBN == ISBN)
-				return idx;
-	return -1;
-}
 
-/////////////////////////////////////////////////////////////////////////
-//Pre:  books has been initialized
-//Post: 
-int BookDB::findBook(std::string title)
-{
-	if (numBooks > 0)
-		for (int idx = 0; idx < numBooks; idx++)
-			if (books[idx].title == title)
-				return idx;
-	return -1;
-}
+
+
 
 // ============Mutators==============
 /////////////////////////////////////////////////////////////////////////
@@ -123,14 +75,14 @@ int BookDB::findBook(std::string title)
 //Post: bk is filled with books from the file <filename>.
 //      WholesaleValue and retailValue are updated as the books
 //      are moved into the books array
-bool BookDB::readBooks(std::string filename)
+bool BookDB::readBooks()
 {
 	numBooks = 0;
 	totalRetailValue = totalWholesaleValue = 0;
 
-	DBFile.open(DBFilename);
+	listFile.open(listFilename);
 
-	if (!DBFile)
+	if (!listFile)
 		return false;
 
 	int temp = 0;
@@ -138,9 +90,9 @@ bool BookDB::readBooks(std::string filename)
 	{
 		std::string tstr;
 
-		DBFile >> books[numBooks].ISBN;
+		listFile >> books[numBooks].ISBN;
 		char tc = ' ';
-		DBFile >> tc; //Dummy char to read the seperator between isbn & books (used in case a book title starts with a number)
+		listFile >> tc; //Dummy char to read the seperator between isbn & books (used in case a book title starts with a number)
 
 
 		// Search for an existing entry
@@ -151,34 +103,34 @@ bool BookDB::readBooks(std::string filename)
 		{
 			int tempint;
 			double tempdbl;
-			std::getline(DBFile, tstr, '}');
-			std::getline(DBFile, tstr, '}');
-			std::getline(DBFile, tstr, '}');
-			DBFile >> tempint; //day
-			DBFile >> tempint; //month
-			DBFile >> tempint; //year
-			DBFile >> tempint;
+			std::getline(listFile, tstr, '}');
+			std::getline(listFile, tstr, '}');
+			std::getline(listFile, tstr, '}');
+			listFile >> tempint; //day
+			listFile >> tempint; //month
+			listFile >> tempint; //year
+			listFile >> tempint;
 			books[temp].quantity += tempint;
-			DBFile >> tempdbl;
+			listFile >> tempdbl;
 			totalRetailValue += tempdbl * (double)tempint;
-			DBFile >> tempdbl;
+			listFile >> tempdbl;
 			totalWholesaleValue += tempdbl * (double)tempint;
 
 			continue;
 		}
 
-		std::getline(DBFile, tstr, '}');
+		std::getline(listFile, tstr, '}');
 		books[numBooks].title = tstr;
-		std::getline(DBFile, tstr, '}');
+		std::getline(listFile, tstr, '}');
 		books[numBooks].author = tstr;
-		std::getline(DBFile, tstr, '}');
+		std::getline(listFile, tstr, '}');
 		books[numBooks].publisher = tstr;
-		DBFile >> books[numBooks].addedOn.month;
-		DBFile >> books[numBooks].addedOn.day;
-		DBFile >> books[numBooks].addedOn.year;
-		DBFile >> books[numBooks].quantity;
-		DBFile >> books[numBooks].retailCost;
-		DBFile >> books[numBooks].wholesaleCost;
+		listFile >> books[numBooks].addedOn.month;
+		listFile >> books[numBooks].addedOn.day;
+		listFile >> books[numBooks].addedOn.year;
+		listFile >> books[numBooks].quantity;
+		listFile >> books[numBooks].retailCost;
+		listFile >> books[numBooks].wholesaleCost;
 
 		totalRetailValue += books[numBooks].retailCost * (double)books[numBooks].quantity;
 		totalWholesaleValue += books[numBooks].wholesaleCost * (double)books[numBooks].quantity;
@@ -186,9 +138,9 @@ bool BookDB::readBooks(std::string filename)
 		numBooks++;
 
 
-	} while (!DBFile.eof());
+	} while (!listFile.eof());
 
-	DBFile.close();
+	listFile.close();
 	return true;
 }
 
@@ -196,38 +148,38 @@ bool BookDB::readBooks(std::string filename)
 //Pre:	Filename is valid and not currently being r/w'd to. We're assuming the
 //		file will never shrink (as only quantities are set to zero, not removed)
 //Post: Book array is formatted and outputted to a file. The filename should
-//      always be DBFile? as you want to 'edit' the database you've opened,
+//      always be listFile? as you want to 'edit' the database you've opened,
 //      not copy it.
-bool BookDB::writeBooks(std::string filename)
+bool BookDB::writeBooks()
 {
-	if (DBFile.is_open())
+	if (listFile.is_open())
 		return false;
 
-	DBFile.open(DBFilename);
+	listFile.open(listFilename);
 	
-	if (!DBFile.is_open())
+	if (!listFile.is_open())
 		return false;
 
 	for (int idx = 0; idx < numBooks; idx++)
 	{
-		DBFile << books[idx].ISBN << '}';
-		DBFile << books[idx].title << '}';
-		DBFile << books[idx].author << '}';
-		DBFile << books[idx].publisher << '}';
-		DBFile << books[idx].addedOn.month << ' ';
-		DBFile << books[idx].addedOn.day << ' ';
-		DBFile << books[idx].addedOn.year << ' ';
-		DBFile << books[idx].quantity << ' ';
-		DBFile << std::fixed << std::setprecision(2);
-		DBFile << books[idx].retailCost << ' ';
-		DBFile << std::fixed << std::setprecision(2);
-		DBFile << books[idx].wholesaleCost;
-		DBFile.unsetf(std::ios_base::fixed);
+		listFile << books[idx].ISBN << '}';
+		listFile << books[idx].title << '}';
+		listFile << books[idx].author << '}';
+		listFile << books[idx].publisher << '}';
+		listFile << books[idx].addedOn.month << ' ';
+		listFile << books[idx].addedOn.day << ' ';
+		listFile << books[idx].addedOn.year << ' ';
+		listFile << books[idx].quantity << ' ';
+		listFile << std::fixed << std::setprecision(2);
+		listFile << books[idx].retailCost << ' ';
+		listFile << std::fixed << std::setprecision(2);
+		listFile << books[idx].wholesaleCost;
+		listFile.unsetf(std::ios_base::fixed);
 		if (idx < numBooks - 1)
-			DBFile << '\n';
+			listFile << '\n';
 	}
 
-	DBFile.close();
+	listFile.close();
 	return true;
 }
 
@@ -273,20 +225,7 @@ bool	BookDB::writeSalesData(std::string filename)
 	return true;
 }
 
-/////////////////////////////////////////////////////////////////////////
-//Pre: bk is a valid book
-//Post: bk is added to the end of the array IF the numBooks is less than
-//      or equal to the max amt of books. Wholesale and Retail value is updated
-//      by adding to the class's member variables. Returns 1 if success, 0 if
-//      error such as not enough space or bk not initialized. Also checks the
-//      values of bk to make sure they're there (not missing ISBN, etc...)
-bool BookDB::addBook(Book bk)
-{
-	if (numBooks == MAX_BOOKS)
-		return false;
-	books[numBooks++] = bk;
-	return 1;
-}
+
 
 /////////////////////////////////////////////////////////////////////////
 //Pre:  iunno?
@@ -309,7 +248,7 @@ double BookDB::sellBook(unsigned long ISBN)
 	totalWholesaleValue -= books[idx].wholesaleCost;
 
 	currentNetProfit += (books[idx].retailCost - books[idx].wholesaleCost);
-	std::cout << "currentnetprof = " << currentNetProfit;
+	std::cout << "Book sold. Profit: " << currentNetProfit << std::endl;
 	currentSalesAmount += books[idx].retailCost;
 
 	return books[idx].retailCost;
@@ -339,24 +278,7 @@ double BookDB::sellBook(int idx)
 	return books[idx].retailCost;
 }
 
-/////////////////////////////////////////////////////////////////////////
-//Pre:  stuff
-//Post: Pretty much the same as sellBook, except it can remove multiple books at
-//		one and returns true if successful and false if there was an error
-bool    BookDB::removeBook(unsigned long ISBN, int quantity)
-{
-	int idx = findBook(ISBN);
-	if (idx < 0)
-		return false;
-	if (books[idx].quantity < 1 + quantity)
-		return false;
 
-	quantityItems -= quantity;
-	books[idx].quantity -= quantity;
-	totalRetailValue -= books[idx].retailCost * quantity;
-	totalWholesaleValue -= books[idx].wholesaleCost * quantity;
-	return 1;
-}
 
 /////////////////////////////////////////////////////////////////////////
 //Pre:  sm is a valid sort method. books array should hold > 1 book
@@ -433,6 +355,25 @@ bool BookDB::sortBooks(SORT_METHOD sm)
 		return true;
 	}
 	return false; // end-of-function return val needed incase it gets reached somehow
+}
+
+/////////////////////////////////////////////////////////////////////////
+//Pre:  stuff
+//Post: Pretty much the same as sellBook, except it can remove multiple books at
+//		one and returns true if successful and false if there was an error
+bool    BookDB::removeBook(unsigned long ISBN, int quantity)
+{
+	int idx = findBook(ISBN);
+	if (idx < 0)
+		return false;
+	if (books[idx].quantity < 1 + quantity)
+		return false;
+
+	quantityItems -= quantity;
+	books[idx].quantity -= quantity;
+	totalRetailValue -= books[idx].retailCost * quantity;
+	totalWholesaleValue -= books[idx].wholesaleCost * quantity;
+	return 1;
 }
 
 /////////////////////////////////////////////////////////////////////////
