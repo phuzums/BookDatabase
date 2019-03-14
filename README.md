@@ -9,6 +9,7 @@ Updated Change log 3/14/19!
  - void printDebugList(BookDB *myDB) was added temporarily for sort method debugging
  - void operator=(const Book &right); was added to the Book class
  - - - - TODO : 
+ - !!! Inputing weird stuff to the menus cause them to go whacko!
  - x NEED MENUS SO BAD. SO SO BAD. 
  - x Book class should not be 100% public, this was intended to make the transfer from a struct easier but has kind of grown into the  mainstay
  - x Sort Methods AGE and QUANTITY do not work... Cost does though! 
