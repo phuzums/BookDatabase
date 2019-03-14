@@ -10,6 +10,7 @@ void complete(string type, string name);
 void welcome();
 void loopReset(bool loop[]);
 void printDebug(BookDB *myDB);
+void printDebugList(BookDB *myDB);
 
 #define SIZE 100
 #define DEBUG false
@@ -41,10 +42,41 @@ int main(int argc, char** argv)
 		cout << "	2. Inventory" << endl;
 		cout << "	3. Report" << endl;
 		cout << "	4. Exit" << endl;
+		cout << "	5. debug stoof" << endl;
 		cout << "=====================================" << endl;
 		cin >> choice[0];
 
+		if (choice[0] == 5)
+		{
+			system("cls");
+			int verb = 0;
+			std::cout << "  Input Verbosity... (0-3)" << std::endl;
+			std::cin >> verb;
+			printDebug(myDB);
+			std::cout << "  Press any key to continue...";
+			system("pause >nul");
 
+			system("cls");
+			std::cout << "  Press any key to output sorted databases..." << std::endl << std::endl;
+
+			std::cout << "\n  Sorting by quantity : " << std::endl << std::left << std::setfill('.');
+			myDB->sortBooks(SORT_METHOD::QUANTITY);
+			myDB->printByMethod(verb, SORT_METHOD::QUANTITY);
+			std::cout << "\n\n  Press any key...\n";
+			system("pause >nul");
+
+			std::cout << "\n  Sorting by cost : " << std::endl;
+			myDB->sortBooks(SORT_METHOD::COST);
+			myDB->printByMethod(verb, SORT_METHOD::COST);
+			std::cout << "\n\n  Press any key...\n";
+			system("pause >nul");
+
+			std::cout << "\n  Sorting by age : " << std::endl;
+			myDB->sortBooks(SORT_METHOD::AGE);
+			myDB->printByMethod(verb, SORT_METHOD::AGE);
+			std::cout << "\n\n  Press any key...\n";
+			system("pause >nul");
+		}
 		if (choice[0] == 1) // CASHIER MODULE
 		{
 			system("CLS");
@@ -304,19 +336,26 @@ void complete(string type, string name)
 
 void welcome()
 {
-	cout << " _ _ _ _ _ _ " << endl;
-	cout << "| | | | | | | | | | | | " << endl;
-	cout << "| | | | | | ___ ___ _ __ ___ ___ | | ___ | || |_ ___ " << endl;
-	cout << "| |/\| |/ _ \ |/ / _ \| ' _ \\ / _ \\ | __/ _ \\ | __| '_ \\ / _ \\ " << endl; cout << "\\ /\\ / __/ | (_| (_) | | | | | | __/ | || (_) | | |_| | | | __/ " << endl; cout << " \\/ \\/ \\___|_|\\___\\___/|_| |_| |_|\\___| \\__\\___/ \\__|_| |_|\\___| " << endl; cout << "	______ ___ " << endl; cout << "	| _ \\ / _ \\ " << endl; cout << "	| | | |___/ /_\\ \\_ __ ______ _" << endl; cout << "	| | | / _ \\ _ | '_ \\|_ / _ | " << endl;
-	cout << "	| |/ / / | | | | | |/ / (| | " << endl;
-	cout << "	|/ \\| |/| |/\,| " << endl;
-	cout << "	______ _ _____ _ " << endl;
-	cout << "	| ___ \ | | / | | " << endl;
-	cout << "	| |/ / ___ ___ | | __ \ --.| |__ ___ _ __ " << endl; cout << "	| ___ \\/ _ \\ / _ \\| |/ / --. \ ' \ / _ \| ' \ " << endl;
-	cout << "	| |/ / () | () | < /\__/ / | | | () | |) | " << endl;
-	cout << "	\/ \/ \/||\\ \/|| ||\/| ./ " << endl;
-	cout << "	| | " << endl;
-	cout << "	|_| " << endl;
+	cout << " _    _      _                            _          _   _ " << endl;
+	cout << "| |  | |    | |                          | |        | | | | " << endl;
+	cout << "| |  | | ___| | ___ ___  _ __ ___   ___  | |_ ___   | |_| |__   ___ " << endl;
+	cout << "| |/\\| |/ _ \\ |/ __/ _ \\| '_ ` _ \\ / _ \\ | __/ _ \\  | __| '_ \\ / _ \\ " << endl;
+	cout << "\\  /\\  /  __/ | (_| (_) | | | | | |  __/ | || (_) | | |_| | | |  __/ " << endl;
+	cout << " \\/  \\/ \\___|_|\\___\\___/|_| |_| |_|\\___|  \\__\\___/   \\__|_| |_|\\___| " << endl;
+	cout << "		______      ___ " << endl;
+	cout << "		|  _  \\    / _ \\ " << endl;
+	cout << "		| | | |___/ /_\\ \\_ __  ______ _" << endl;
+	cout << "		| | | / _ \\  _  | '_ \\|_  / _` | " << endl;
+	cout << "		| |/ /  __/ | | | | | |/ / (_| | " << endl;
+	cout << "		|___/ \\___\\_| |_/_| |_/___\\__,_| " << endl;
+	cout << "		______             _      _____ _ " << endl;
+	cout << "		| ___ \\           | |    /  ___| | " << endl;
+	cout << "		| |_/ / ___   ___ | | __ \\ `--.| |__   ___  _ __ " << endl;
+	cout << "		| ___ \\/ _ \\ / _ \\| |/ /  `--. \\ '_ \\ / _ \\| '_ \\ " << endl;
+	cout << "		| |_/ / (_) | (_) |   <  /\\__/ / | | | (_) | |_) | " << endl;
+	cout << "		\\____/ \\___/ \\___/|_|\\_\\ \\____/|_| |_|\\___/| .__/ " << endl;
+	cout << "						 	   | | " << endl;
+	cout << "						 	   |_| " << endl;
 	cout << endl << "Press enter to start the program. " << endl;
 	cin.get();
 	system("CLS");
@@ -356,4 +395,10 @@ void printDebug(BookDB *myDB)
 	std::cout << "\n\n";
 	system("pause >nul");
 	std::cin.sync();
+}
+
+void printDebugList(BookDB *myDB)
+{
+	for (int idx = 0; idx < myDB->getNumBooks(); idx++)
+		std::cout << "\nBook " << idx << ':' << myDB->getBook(idx).title;
 }
