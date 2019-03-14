@@ -50,8 +50,9 @@ public:
 	double	sellBook(int idx);
 	bool    removeBook(unsigned long ISBN, int quantity);		// <--probably just use this one
 
+	// Member Functions
 	bool    sortBooks(SORT_METHOD sm);
-
+	void	printByMethod(int verbosity, SORT_METHOD sm);
 
 private:
 	int     quantityItems;			// number of books including duplicate copies
