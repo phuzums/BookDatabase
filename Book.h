@@ -10,11 +10,9 @@ struct Date
 class Book
 {
 public:
-	//implement later
-	//Book();
-	//Book(unsigned long isbn, std::string title, std::string author, std::string publisher);
-
+	
 public:
+	void operator=(const Book &right);
 	unsigned long ISBN;
 	double wholesaleCost, retailCost;
 	std::string title, author, publisher;
