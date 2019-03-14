@@ -308,8 +308,8 @@ bool BookDB::sortBooks(SORT_METHOD sm)
 					min_idx = j;
 			// Swap
 			Book temp = books[min_idx];
-			books[min_idx] = books[j];
-			books[j] = temp;
+			books[min_idx] = books[i];
+			books[i] = temp;
 		}
 		return true;
 	}
@@ -324,9 +324,10 @@ bool BookDB::sortBooks(SORT_METHOD sm)
 				if (books[j].retailCost < books[min_idx].retailCost)
 					min_idx = j;
 			// Swap
-			Book temp = books[min_idx];
+			std::swap(books[i], books[min_idx]);
+			/*Book temp = books[min_idx];
 			books[min_idx] = books[j];
-			books[j] = temp;
+			books[j] = temp;*/
 		}
 		return true;
 	}
@@ -346,10 +347,10 @@ bool BookDB::sortBooks(SORT_METHOD sm)
 					min_idx = j;
 
 			// Swap
-			if (min_idx == j) {
+			if (min_idx == i) {
 				Book temp = books[min_idx];
-				books[min_idx] = books[j];
-				books[j] = temp;
+				books[min_idx] = books[i];
+				books[i] = temp;
 			}
 		}
 		return true;
@@ -379,10 +380,29 @@ bool    BookDB::removeBook(unsigned long ISBN, int quantity)
 /////////////////////////////////////////////////////////////////////////
 //Pre:  
 //Post: 
-std::ostream& operator <<(std::ostream &out, const Book &bk)
+void	BookDB::printByMethod(int verbosity = 0, SORT_METHOD sm = SORT_METHOD::QUANTITY)
 {
-	std::cout << "\n  Title: " << bk.title << "\n  Author: " << bk.author << "\n  Cost: " << bk.retailCost
-		<< "\n  Wholesale: " << bk.wholesaleCost << "\n  Publisher: " << bk.publisher
-		<< "\n  ISBN: " << bk.ISBN << "\n  Quantity: " << bk.quantity;
-	return out;
+	for (int idx = 0; idx < numBooks; idx++)
+	{
+		std::cout << "\nBook " << idx << " : ";
+		if (sm == SORT_METHOD::AGE)
+		{
+			std::cout << std::setw(50) << books[idx].title << "Age : " << books[idx].addedOn.day
+				<< '/' << books[idx].addedOn.month << '/' << books[idx].addedOn.year;
+		}
+		if (sm == SORT_METHOD::COST)
+		{
+			std::cout << std::setw(50) << books[idx].title << "Cost : $"
+				<< std::fixed << std::setprecision(2) << books[idx].retailCost;
+		}
+		if (sm == SORT_METHOD::QUANTITY)
+		{
+			std::cout << std::setw(50) << books[idx].title << "Quantity : " 
+				<< books[idx].quantity;
+		}
+		if (verbosity > 1)
+			std::cout << std::endl << "Author : " << books[idx].author << "... Publisher : " << books[idx].publisher;
+		if (verbosity > 0)
+			std::cout << std::endl << "ISBN : " << books[idx].ISBN << std::endl;
+	}
 }
