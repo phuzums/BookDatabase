@@ -25,6 +25,11 @@ BookDB::BookDB(std::string filename, std::string sFilename) : BookList()
 //Post: stuff gets deleted and whatnot
 BookDB::~BookDB()
 {
+
+}
+
+void BookDB::writeOutput()
+{
 	std::cout << "\nWritting Database to file " << listFilename << "... ";
 	if (writeBooks())
 		std::cout << "Success!\n";
@@ -37,16 +42,6 @@ BookDB::~BookDB()
 	else
 		std::cout << "Error writting to file...\n";
 }
-
-
-
-// ============Getters==============
-
-
-
-
-
-
 
 /////////////////////////////////////////////////////////////////////////
 //Pre:  books has been initialized
@@ -64,9 +59,10 @@ double BookDB::getRetailValue()
 	return totalRetailValue;
 }
 
-
-
-
+double BookDB::getNetProfit()
+{
+	return currentNetProfit;
+}
 
 // ============Mutators==============
 /////////////////////////////////////////////////////////////////////////
@@ -217,7 +213,7 @@ bool	BookDB::writeSalesData(std::string filename)
 	salesFile.open(filename, std::fstream::out);
 	if (!salesFile.is_open())
 		return false;
-	std::cout << "currentnetprofit = " << currentNetProfit;
+	std::cout << "\nNet Profit for this Session is $" << std::fixed << std::setprecision(2) << currentNetProfit;
 	salesFile << std::setprecision(2) << std::fixed << currentNetProfit;
 	salesFile << std::endl << currentSalesAmount;
 
@@ -248,7 +244,7 @@ double BookDB::sellBook(unsigned long ISBN)
 	totalWholesaleValue -= books[idx].wholesaleCost;
 
 	currentNetProfit += (books[idx].retailCost - books[idx].wholesaleCost);
-	std::cout << "Book sold. Profit: " << currentNetProfit << std::endl;
+	std::cout << "Book sold. Profit: $" << std::fixed << std::setprecision(2) << currentNetProfit << std::endl;
 	currentSalesAmount += books[idx].retailCost;
 
 	return books[idx].retailCost;
@@ -271,11 +267,42 @@ double BookDB::sellBook(int idx)
 	totalWholesaleValue -= books[idx].wholesaleCost;
 
 	currentNetProfit += (books[idx].retailCost - books[idx].wholesaleCost);
-	std::cout << "currentnetprof = " << currentNetProfit;
+	std::cout << "Book sold. Profit: $" << std::fixed << std::setprecision(2) << currentNetProfit << std::endl;
 	currentSalesAmount += books[idx].retailCost;
 
 
 	return books[idx].retailCost;
+}
+
+/////////////////////////////////////////////////////////////////////////
+//Pre:  
+//Post: 
+void BookDB::addBook(const Book &bk)
+{
+	// Either way, increase value tracking stuff
+	totalRetailValue += bk.retailCost * bk.quantity;
+	totalWholesaleValue += bk.wholesaleCost * bk.quantity;
+
+	BookList::addBook(bk);
+}
+
+/////////////////////////////////////////////////////////////////////////
+//Pre:  
+//Post: 
+void BookDB::modifyBook(int idx, Book replacement)
+{
+	// De-register sales date just in-case that is being modified
+	totalRetailValue -= books[idx].retailCost * books[idx].quantity;
+	totalWholesaleValue -= books[idx].wholesaleCost * books[idx].quantity;
+	quantityItems -= books[idx].quantity;
+
+	// Add the new book's value to the database
+	totalRetailValue += replacement.retailCost * replacement.quantity;
+	totalWholesaleValue += replacement.wholesaleCost * replacement.quantity;
+	quantityItems += replacement.quantity;
+
+	// Call the base class's version to finish off the job
+	BookList::modifyBook(idx, replacement);
 }
 
 
@@ -339,19 +366,22 @@ bool BookDB::sortBooks(SORT_METHOD sm)
 		{
 			min_idx = i;
 			for (j = i + 1; j < numBooks; j++)
-				if (books[j].addedOn.year < books[min_idx].addedOn.year && books[j].addedOn.year != books[min_idx].addedOn.year)
+			{
+				long temp = books[j].addedOn.day + books[j].addedOn.month * 31 + books[j].addedOn.year * 365;
+				long temp2 = books[min_idx].addedOn.day + books[min_idx].addedOn.month * 31 + books[min_idx].addedOn.year * 365;
+				if (temp < temp2)
 					min_idx = j;
-				else if (books[j].addedOn.month < books[min_idx].addedOn.month && books[j].addedOn.month != books[min_idx].addedOn.month)
-					min_idx = j;
-				else if (books[j].addedOn.day < books[min_idx].addedOn.day && books[j].addedOn.day != books[min_idx].addedOn.day)
-					min_idx = j;
-
-			// Swap
-			if (min_idx == i) {
-				Book temp = books[min_idx];
-				books[min_idx] = books[i];
-				books[i] = temp;
 			}
+		//		if (books[j].addedOn.day <= books[min_idx].addedOn.day || books[j].addedOn.month <= books[min_idx].addedOn.month || books[j].addedOn.year <= books[min_idx].addedOn.year)
+			//		if (books[j].addedOn.month <= books[min_idx].addedOn.month || books[j].addedOn.year <= books[min_idx].addedOn.year)
+				//		if (books[j].addedOn.year < books[min_idx].addedOn.year)
+					//		min_idx = j;
+			// Swap
+			std::swap(books[i], books[min_idx]);
+				//Book temp = books[min_idx];
+				//books[min_idx] = books[i];
+				//books[i] = temp;
+			
 		}
 		return true;
 	}
@@ -367,13 +397,14 @@ bool    BookDB::removeBook(unsigned long ISBN, int quantity)
 	int idx = findBook(ISBN);
 	if (idx < 0)
 		return false;
-	if (books[idx].quantity < 1 + quantity)
+	if (books[idx].quantity < quantity)
 		return false;
 
 	quantityItems -= quantity;
-	books[idx].quantity -= quantity;
+
 	totalRetailValue -= books[idx].retailCost * quantity;
 	totalWholesaleValue -= books[idx].wholesaleCost * quantity;
+	BookList::removeBook(ISBN, quantity);
 	return 1;
 }
 
@@ -384,21 +415,34 @@ void	BookDB::printByMethod(int verbosity = 0, SORT_METHOD sm = SORT_METHOD::QUAN
 {
 	for (int idx = 0; idx < numBooks; idx++)
 	{
-		std::cout << "\nBook " << idx << " : ";
+		std::cout << "\nBook " << (idx > 9 ? "" : " ") << idx << " : ";
 		if (sm == SORT_METHOD::AGE)
 		{
-			std::cout << std::setw(50) << books[idx].title << "Age : " << books[idx].addedOn.day
-				<< '/' << books[idx].addedOn.month << '/' << books[idx].addedOn.year;
+			std::cout << std::left << std::setfill('.');
+			std::cout << std::setw(50) << books[idx].title << "Age : " << (books[idx].addedOn.month < 10 ? " " : "") << books[idx].addedOn.month
+				<< '/' << (books[idx].addedOn.day < 10 ? " " : "") << books[idx].addedOn.day << '/' << books[idx].addedOn.year;
 		}
 		if (sm == SORT_METHOD::COST)
 		{
-			std::cout << std::setw(50) << books[idx].title << "Cost : $"
+			std::cout << std::left << std::setfill('.');
+			std::cout << std::setw(42) << books[idx].title << "Cost : $"
 				<< std::fixed << std::setprecision(2) << books[idx].retailCost;
+			// kind of weird, but print a space if the quantity is over ten to make up for the extra digit - prettiness up to 99 items!
+			std::cout << std::endl << "Quantity " << std::setw(35) << books[idx].quantity << "Total Retail : $" << std::fixed << std::setprecision(2) << books[idx].retailCost * books[idx].quantity << std::endl;
 		}
 		if (sm == SORT_METHOD::QUANTITY)
 		{
+			std::cout << std::left << std::setfill('.');
 			std::cout << std::setw(50) << books[idx].title << "Quantity : " 
 				<< books[idx].quantity;
+		}
+		if (sm == SORT_METHOD::WHOLESALE)
+		{
+			std::cout << std::left << std::setfill('.');
+			std::cout << std::setw(40) << books[idx].title << "Wholesale : $"
+				<< std::fixed << std::setprecision(2) << books[idx].wholesaleCost;
+			
+			std::cout << std::setfill(' ') << std::endl << "Quantity " <<  std::setw(35) << books[idx].quantity  << "Total Wholesale : $" << std::fixed << std::setprecision(2) << books[idx].wholesaleCost * books[idx].quantity << std::endl;
 		}
 		if (verbosity > 1)
 			std::cout << std::endl << "Author : " << books[idx].author << "... Publisher : " << books[idx].publisher;
