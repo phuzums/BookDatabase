@@ -19,6 +19,8 @@ Updated 3/18/19 :D
  TODO : 
  - x Maybe have sort by wholesale cost too?
  - x A whole lot of psuedocode
+ - project files need to be renamed
+ - we still need to make PRESENTATION FRIENDLY BOOK TITLES
 
 Updated Change log 3/14/19!
  - Implemented new sort methods
