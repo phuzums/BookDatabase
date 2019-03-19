@@ -1095,7 +1095,7 @@ else if (choice[0] == 3) // REPORT MODULE
 		cout << "======================================================" << endl;
 		cout << "Report Module. " << endl;
 		cout << "======================================================" << endl;
-		cout << "   1. Invetory List" << endl;
+		cout << "   1. Inventory List" << endl;
 		cout << "   2. Display WholeSale Value" << endl;
 		cout << "   3. Display Retail Value" << endl;
 		cout << "   4. Display Amounts" << endl;
@@ -1110,8 +1110,8 @@ else if (choice[0] == 3) // REPORT MODULE
 		{
 			cin.ignore();
 			system("CLS");
-			for (int idx = 0; idx < myDB->getNumBooks(); idx++)
-				cout << "Book " << idx << ":" << myDB->getBook(idx) << endl << endl;
+			BookList* bl = myDB;
+			bl->printByMethod(0, SORT_METHOD::SIMPLE);
 			cout << endl << endl << "Press enter to continue. " << endl;
 			cin.get();
 			system("CLS");
