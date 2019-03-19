@@ -14,6 +14,7 @@ Updated 3/18/19 :D
  - Kinda sorta did polymorphism? Yusuf plz check it >_<
  - Added SORT_METHOD::SIMPLE for the base class to have
  - ^tried to use myDB as a baseclass to print stuff
+ - retargeted for the school's lab computers (SDK build 10.0.15063)
  
  TODO : 
  - x Maybe have sort by wholesale cost too?
