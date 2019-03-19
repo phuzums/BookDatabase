@@ -1,3 +1,4 @@
+#include <iomanip>
 #include "BookList.h"
 
 BookList::BookList()
@@ -181,7 +182,31 @@ void BookList::modifyBook(int idx, Book replacement)
 	books[idx] = replacement;
 }
 
-void	BookList::printByMethod(int verbosity, SORT_METHOD sm)
+void BookList::printByMethod(int verbosity, SORT_METHOD sm)
 {
-	
+	for (int idx = 0; idx < numBooks; idx++)
+	{
+		std::cout << "\nBook " << (idx > 9 ? "" : " ") << idx << " : ";
+		if (sm == SORT_METHOD::AGE)
+		{
+			std::cout << std::left << std::setfill('.');
+			std::cout << std::setw(50) << books[idx].title << "Age : " << (books[idx].addedOn.month < 10 ? " " : "") << books[idx].addedOn.month
+				<< '/' << (books[idx].addedOn.day < 10 ? " " : "") << books[idx].addedOn.day << '/' << books[idx].addedOn.year;
+		}
+		if (sm == SORT_METHOD::QUANTITY)
+		{
+			std::cout << std::left << std::setfill('.');
+			std::cout << std::setw(50) << books[idx].title << "Quantity : "
+				<< books[idx].quantity;
+		}
+		if (sm == SORT_METHOD::SIMPLE)
+		{
+			std::cout << std::left << std::setfill('.');
+			std::cout << std::setw(45) << books[idx].title << "by " << books[idx].author << '.';
+		}
+		if (verbosity > 1)
+			std::cout << std::endl << "Author : " << books[idx].author << "... Publisher : " << books[idx].publisher;
+		if (verbosity > 0)
+			std::cout << std::endl << "ISBN : " << books[idx].ISBN << std::endl;
+	}
 }
