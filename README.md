@@ -1,5 +1,21 @@
 # BookDatabase
 Project for CIS 22B
+Updated 3/18/19 :D
+ - Inserted Reports Module to main.cpp
+ - Filled out implementation side of Reports module
+ - Added SORT_METHOD::WHOLESALE, mostly for the printByMethod function used by the reports module
+ - Changed to printByMethod function to print out prettier stuff for the reports module
+ - Added a submenu to reports root -- "Sorting" menu
+ - Added implementation side to Sorting menu
+ - Any numerical menu selection is now tabbed out for clarity 
+ - Added Sales Data selection to reports menu
+ - Added a getter function for CurrentNetProfit
+ - Removed debug menu from root (though it can still be accessed by entering '88'
+ 
+ TODO : 
+ - x Maybe have sort by wholesale cost too?
+ - x A whole lot of psuedocode
+
 Updated Change log 3/14/19!
  - Implemented new sort methods
  - Added a debug option to the main menu for us to try out sorting / report methods
