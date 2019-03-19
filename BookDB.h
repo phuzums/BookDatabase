@@ -21,10 +21,7 @@
  Retail Price The price Serendipity is charging for each copy of the book.
  */
 
-enum SORT_METHOD
-{
-	QUANTITY = 0, COST, AGE
-};
+
 
 
 
@@ -38,10 +35,12 @@ public:
 	// Getters
 	double   getWholesaleValue();
 	double  getRetailValue();
+	double	getNetProfit();
 
 	// Mutators
 	bool    readBooks();
 	bool    writeBooks();
+	void	writeOutput();
 	
 	bool	readSalesData(std::string filename);
 	bool	writeSalesData(std::string filename);
@@ -49,6 +48,9 @@ public:
 	double  sellBook(unsigned long ISBN);						// These cannot be combined...
 	double	sellBook(int idx);
 	bool    removeBook(unsigned long ISBN, int quantity);		// <--probably just use this one
+
+	void	addBook(const Book &bk);
+	void	modifyBook(int idx, Book replacement);
 
 	// Member Functions
 	bool    sortBooks(SORT_METHOD sm);
