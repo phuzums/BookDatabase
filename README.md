@@ -21,6 +21,8 @@ Updated 3/18/19 :D
  - x A whole lot of psuedocode
  - project files need to be renamed
  - we still need to make PRESENTATION FRIENDLY BOOK TITLES
+ - add an endline upon exit
+ 
 
 Updated Change log 3/14/19!
  - Implemented new sort methods
