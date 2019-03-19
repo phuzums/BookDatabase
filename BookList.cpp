@@ -36,7 +36,8 @@ Book BookList::getBook(int index)
 		return books[index];
 	else
 	{
-		Book bk = { 0, 0, 0, "err", "err", "err", {0,0,0},0 };
+		Book bk;
+		return bk; // bk will auto-initialize to an 'error' book
 	}
 }
 
@@ -75,6 +76,63 @@ int BookList::findBook(std::string title)
 }
 
 /////////////////////////////////////////////////////////////////////////
+//Pre:  books has been initialized
+//Post: A Booklist pointer is returned which is a sublist of the calling
+//		booklist. User must also check the booklist to make sure it includes 
+//		any books at all, as an empty booklist might be the result of this search.
+BookList* BookList::findBookByAuthor(std::string author)
+{
+	BookList *t_list = new BookList();
+	for (int idx = 0; idx < numBooks; idx++)
+		if (books[idx].author == author)
+			t_list->addBook(books[idx]);
+	return t_list;
+}
+
+/////////////////////////////////////////////////////////////////////////
+//Pre:  books has been initialized
+//Post: A Booklist pointer is returned which is a sublist of the calling
+//		booklist including members of the calling booklist which have the publisher
+//		searched for. User must also check the booklist to make sure it includes 
+//		any books at all, as an empty booklist might be the result of this search.
+BookList* BookList::findBookByPublisher(std::string publisher)
+{
+	BookList *t_list = new BookList();
+	for (int idx = 0; idx < numBooks; idx++)
+		if (books[idx].publisher == publisher)
+			t_list->addBook(books[idx]);
+	return t_list;
+}
+
+
+/////////////////////////////////////////////////////////////////////////
+//Pre:  books has been initialized
+//Post: 
+BookList* BookList::findBookByDate(Date myDate)
+{
+	BookList *t_list = new BookList();
+	//Search by year
+	for (int idx = 0; idx < numBooks; idx++)
+		if (books[idx].addedOn.year == myDate.year) // find hits for that year
+			if (books[idx].addedOn.month == myDate.month || myDate.month == 0) //See if that hit matches the month (or if month is 0)
+				if (books[idx].addedOn.day == myDate.day || myDate.day == 0) // See if the day matches or if it's zero
+					t_list->addBook(books[idx]); // Add the book to the sublist, as it's a hit :D
+	return t_list;
+}
+
+
+BookList* BookList::findBookByQuantity(int amt)
+{
+	BookList *t_list = new BookList();
+	for (int idx = 0; idx < numBooks; idx++)
+		if (books[idx].quantity == amt)
+			t_list->addBook(books[idx]);
+	return t_list;
+}
+
+
+
+/////////////////////////////////////////////////////////////////////////
 //Pre: bk is a valid book
 //Post: bk is added to the end of the array IF the numBooks is less than
 //      or equal to the max amt of books. Wholesale and Retail value is updated
@@ -85,7 +143,32 @@ bool BookList::addBook(const Book &bk)
 {
 	if (numBooks >= MAX_BOOKS)
 		return false;
+
+	// ISBN checking
+	if (findBook(bk.ISBN))
+		// If the book already exists, just add the quantity to ours. Price gets assimulated to our prices
+		books[findBook(bk.ISBN)].quantity += bk.quantity;
+	else
+		// If not, add it to the end of our book list while increasing neccessary values...
+		books[numBooks++] = bk; // <--invokes our awesome assignment oppeartor
+
 	books[numBooks++] = bk;
+	return true;
+}
+
+/////////////////////////////////////////////////////////////////////////
+//Pre:  stuff
+//Post: Pretty much the same as sellBook, except it can remove multiple books at
+//		one and returns true if successful and false if there was an error
+bool BookList::removeBook(unsigned long ISBN, int quantity)
+{
+	int idx = findBook(ISBN);
+	if (idx < 0)
+		return false;
+	if (books[idx].quantity < quantity)
+		return false;
+
+	books[idx].quantity -= quantity;
 	return 1;
 }
 
@@ -93,14 +176,12 @@ bool BookList::addBook(const Book &bk)
 //Pre:  stuff
 //Post: Pretty much the same as sellBook, except it can remove multiple books at
 //		one and returns true if successful and false if there was an error
-bool    BookList::removeBook(unsigned long ISBN, int quantity)
+void BookList::modifyBook(int idx, Book replacement)
 {
-	int idx = findBook(ISBN);
-	if (idx < 0)
-		return false;
-	if (books[idx].quantity < 1 + quantity)
-		return false;
+	books[idx] = replacement;
+}
 
-	books[idx].quantity -= quantity;
-	return 1;
+void	BookList::printByMethod(int verbosity, SORT_METHOD sm)
+{
+	
 }
