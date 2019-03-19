@@ -34,7 +34,7 @@ public:
 
 	double			getTotalCost();
 	void			modifyBook(int idx, Book replacement);
-	virtual void	printByMethod(int verbosity, SORT_METHOD sm);
+	void			printByMethod(int verbosity, SORT_METHOD sm);
 
 protected:
 	Book*			books;
