@@ -11,6 +11,9 @@ Updated 3/18/19 :D
  - Added Sales Data selection to reports menu
  - Added a getter function for CurrentNetProfit
  - Removed debug menu from root (though it can still be accessed by entering '88'
+ - Kinda sorta did polymorphism? Yusuf plz check it >_<
+ - Added SORT_METHOD::SIMPLE for the base class to have
+ - ^tried to use myDB as a baseclass to print stuff
  
  TODO : 
  - x Maybe have sort by wholesale cost too?
